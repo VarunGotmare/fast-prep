@@ -20,7 +20,7 @@ def generate_tutorial():
         chapter = data.get("chapter")
         level = data.get("level")
         result = generate_docs(chapter, level)
-        return jsonify(result), 200
+        return jsonify({"result":result}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -30,18 +30,21 @@ def doubt():
         data = request.get_json()
         image_url = data.get("image_url")
         input = data.get("input")
+        if image_url:
+            response = requests.get(image_url)
+            image = Image.open(BytesIO(response.content))
+            if image.mode == 'RGBA':
+                image = image.convert('RGB')
+            image_path = "temp.jpg"
+            image.save(image_path)
 
-        response = requests.get(image_url)
-        image = Image.open(BytesIO(response.content))
-        if image.mode == 'RGBA':
-            image = image.convert('RGB')
-        image_path = "temp.jpg"
-        image.save(image_path)
-
-        result = doubt_bot(image_path, input)
-        if os.path.exists(image_path):
-            os.remove(image_path)
-        return jsonify(result), 200
+            result = doubt_bot(image_path, input)
+            if os.path.exists(image_path):
+                os.remove(image_path)
+        else:
+            result = doubt_bot(None, input)
+            
+        return jsonify({"result":result}), 200
 
     except Exception as error:
         return jsonify({"error": str(error)}), 500

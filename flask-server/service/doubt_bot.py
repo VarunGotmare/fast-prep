@@ -19,18 +19,33 @@ prompt  = PromptTemplate(
     input : {input}
     """
 )
+prompt2 = PromptTemplate(
+    input_variables=["input"],
+    template="""
+    You are chat bot specifical made only to answer related to JEE and NEET syllabus that is physics , chemistry , maths and bio , you have to provide the solution to the doubt.
+    dont answer other random answer, be specific but detailed in your answer.
+    be focused on the doubt and provide the solution to the doubt.
+    input : {input}
+    """
+)
 
-chain = LLMChain(llm=llm, prompt=prompt)
+
 
 def doubt_bot(image_path, input):
-    ocr = PaddleOCR(lang='en')  # Set language
-    result = ocr.ocr(image_path, cls=True)
-    extracted_text = []
-    for line in result:
-        for word_info in line:
-            extracted_text.append(word_info[1][0])  # Extract text
+    if image_path:
+        chain = LLMChain(llm=llm, prompt=prompt)
+        ocr = PaddleOCR(lang='en')  # Set language
+        result = ocr.ocr(image_path, cls=True)
+        extracted_text = []
+        for line in result:
+            for word_info in line:
+                extracted_text.append(word_info[1][0])  # Extract text
 
-    ocr_text = " ".join(extracted_text)
-    print(ocr_text)
+        ocr_text = " ".join(extracted_text)
+        print(ocr_text)
 
-    return chain.run({"ocr_text":ocr_text,"input":input})
+        return chain.run({"ocr_text":ocr_text,"input":input})
+    else:
+        # print(llm.invoke(input))
+        chain = LLMChain(llm=llm, prompt=prompt2)
+        return chain.run({"input":input})

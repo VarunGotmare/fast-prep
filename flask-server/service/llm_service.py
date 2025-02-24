@@ -39,6 +39,9 @@ Detailed explanation of each topic with increasing complexity as per the level.
 Relevant formulas, equations, or reactions (only if applicable).
 Solved examples with step-by-step solutions.
 Additional insights, common mistakes, and exam tips.
+
+Send in a markdown , well formatted document,
+leave double space for new line after heading , and triple space after new topic , make headings more bigger
     """
 )
 
